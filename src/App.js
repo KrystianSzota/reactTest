@@ -1,5 +1,7 @@
 import React from 'react';
 import './App.css';
+import RoundsList from './RoundsList';
+import Stoper from './Stoper';
 
 class App extends React.Component {
   intervalId;
@@ -12,6 +14,7 @@ class App extends React.Component {
       decySeconds: 0,
       isActive: false,
       rounds: [],
+      users: [],
       userName: ''
     };
 
@@ -24,7 +27,9 @@ class App extends React.Component {
     this.resetStoper = this.resetStoper.bind(this);
     this.addRound = this.addRound.bind(this);
     this.onUserInputChange = this.onUserInputChange.bind(this);
+    this.addUser = this.addUser.bind(this);
   }
+
 
   tick() {
     this.setState((state, props) => {
@@ -71,7 +76,9 @@ class App extends React.Component {
         seconds: 0,
         decySeconds: 0,
         isActive: false,
-        rounds: []
+        rounds: [],
+        userName: '',
+        users: []
       }
     });
   }
@@ -91,6 +98,22 @@ class App extends React.Component {
     });
   }
 
+  addUser() {
+    this.setState((state) => {
+      return {
+        ...state,
+        users: [
+          ...state.users,
+          {
+            userName: state.userName,
+            decySeconds: state.decySeconds,
+            seconds: state.seconds
+          }
+        ]
+      }
+    });
+  }
+
   onUserInputChange(event) {
     this.setState((state) => {
       return {
@@ -101,8 +124,10 @@ class App extends React.Component {
   }
 
   render() {
-    const listItems = this.state.rounds.map((round, idx) => {
-      return <li key={idx}>{round.seconds} : {round.decySeconds}</li>
+  
+
+    const usersList = this.state.users.map((user, idx) => {
+      return <li key={idx}>{user.userName} - {user.seconds} : {user.decySeconds}</li>
     });
 
     return (
@@ -112,11 +137,15 @@ class App extends React.Component {
         {this.state.isActive && <button onClick={this.stopStoper}>Stop</button>}
         {this.state.isActive && <button onClick={this.addRound}>Add round</button>}
         {!this.state.isActive && <input value={this.state.userName} onChange={this.onUserInputChange}></input>}
-        <div>{this.state.seconds} : {this.state.decySeconds}</div>
-        <h1>Rounds</h1>
-        <ul>
-          {listItems}
-        </ul>
+        {!this.state.isActive && <button onClick={this.addUser}>Add user</button>}
+        <div><h1>{this.state.seconds} : {this.state.decySeconds}</h1></div>
+        <RoundsList rounds={this.state.rounds}></RoundsList>
+        <h1>Leaderboard</h1>
+        <ol>
+          {usersList}
+        </ol>
+
+        <Stoper name="Krystian"></Stoper>
       </div>
     );
   }
