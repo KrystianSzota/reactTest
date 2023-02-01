@@ -2,6 +2,8 @@ import React from 'react';
 import './App.css';
 
 class App extends React.Component {
+  intervalId;
+
   constructor() {
     super();
 
@@ -10,7 +12,8 @@ class App extends React.Component {
       decySeconds: 0
     };
 
-    setInterval(() => { this.tick() }, 100);
+    this.startStoper = this.startStoper.bind(this);
+    this.stopStoper = this.stopStoper.bind(this);
   }
 
   tick() {
@@ -30,9 +33,21 @@ class App extends React.Component {
     });
   }
 
+  startStoper(){
+    this.intervalId = setInterval(() => { this.tick() }, 100);
+  }
+
+  stopStoper(){
+    clearInterval(this.intervalId);
+  }
+
   render() {
     return (
-      <div>{this.state.seconds} : {this.state.decySeconds}</div>
+      <div>
+        <button onClick={this.startStoper}>Start</button>
+        <button onClick={this.stopStoper}>Stop</button>
+        <div>{this.state.seconds} : {this.state.decySeconds}</div>
+      </div>
     );
   }
 }
