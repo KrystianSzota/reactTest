@@ -11,13 +11,19 @@ class App extends React.Component {
       seconds: 0,
       decySeconds: 0,
       isActive: false,
-      rounds: []
+      rounds: [],
+      userName: ''
     };
 
+    // Jezeli startStoper ma być funkcja obslugujaca event to
+    // musimy przypisac "this" do tej funkcji
+    // tak aby funkcja w momencie wywolania "wiedziala" czym jest "this"
+    // this - to oczywiscie obiekt naszego komponentu
     this.startStoper = this.startStoper.bind(this);
     this.stopStoper = this.stopStoper.bind(this);
     this.resetStoper = this.resetStoper.bind(this);
     this.addRound = this.addRound.bind(this);
+    this.onUserInputChange = this.onUserInputChange.bind(this);
   }
 
   tick() {
@@ -25,7 +31,7 @@ class App extends React.Component {
       let decySeconds = state.decySeconds + 1;
       let seconds = state.seconds;
 
-      if(decySeconds === 10){
+      if (decySeconds === 10) {
         seconds++;
         decySeconds = 0;
       }
@@ -37,31 +43,31 @@ class App extends React.Component {
     });
   }
 
-  startStoper(){
-    if(!this.isActive){
-    this.intervalId = setInterval(() => { this.tick() }, 100);
-    this.setState((state, props)=>{
-      return{
-        ...state,
-        isActive: true
-      }
-    });
+  startStoper() {
+    if (!this.isActive) {
+      this.intervalId = setInterval(() => { this.tick() }, 100);
+      this.setState((state, props) => {
+        return {
+          ...state,
+          isActive: true
+        }
+      });
+    }
   }
-}
 
-  stopStoper(){
+  stopStoper() {
     clearInterval(this.intervalId);
-    this.setState((state, props)=>{
-      return{
+    this.setState((state, props) => {
+      return {
         ...state,
         isActive: false
       }
     });
   }
 
-  resetStoper(){
-    this.setState(()=>{
-      return{
+  resetStoper() {
+    this.setState(() => {
+      return {
         seconds: 0,
         decySeconds: 0,
         isActive: false,
@@ -70,9 +76,9 @@ class App extends React.Component {
     });
   }
 
-  addRound(){
-    this.setState((state)=>{
-      return{
+  addRound() {
+    this.setState((state) => {
+      return {
         ...state,
         rounds: [
           ...state.rounds,
@@ -85,20 +91,31 @@ class App extends React.Component {
     });
   }
 
+  onUserInputChange(event) {
+    this.setState((state) => {
+      return {
+        ...state,
+        userName: event.target.value
+      };
+    })
+  }
+
   render() {
-    const listItem = this.state.rounds.map((round, idx) => {
+    const listItems = this.state.rounds.map((round, idx) => {
       return <li key={idx}>{round.seconds} : {round.decySeconds}</li>
     });
+
     return (
       <div>
         {!this.state.isActive && <button onClick={this.startStoper}>Start</button>}
-        {this.state.isActive && <button onClick={this.stopStoper}>Stop</button>}
         {!this.state.isActive && <button onClick={this.resetStoper}>Reset</button>}
-        {this.state.isActive && <button onClick={this.addRound}>Round</button>}
+        {this.state.isActive && <button onClick={this.stopStoper}>Stop</button>}
+        {this.state.isActive && <button onClick={this.addRound}>Add round</button>}
+        {!this.state.isActive && <input value={this.state.userName} onChange={this.onUserInputChange}></input>}
         <div>{this.state.seconds} : {this.state.decySeconds}</div>
         <h1>Rounds</h1>
         <ul>
-          {listItem}
+          {listItems}
         </ul>
       </div>
     );
